@@ -1,40 +1,29 @@
 {
-  "name": "aws-step-functions-constructor",
-  "displayName": "AWS step functions constructor",
+  "name": "@lorhansohaky/aws-step-functions-viewer",
+  "displayName": "AWS step functions viewer",
   "description": "Visualization of AWS step functions",
   "icon": "images/newPic.png",
-  "version": "0.8.1",
-  "publisher": "paulshestakov",
+  "version": "0.0.1",
+  "publisher": "LorhanSohaky",
   "repository": {
     "type": "git",
-    "url": "https://github.com/PaulShestakov/aws-step-functions-constructor.git"
+    "url": "https://github.com/LorhanSohaky/aws-step-functions-viewer.git"
   },
   "engines": {
-    "vscode": "^1.28.0"
+    "node": "^12.0.0"
   },
-  "categories": [
-    "Visualization"
+  "files": [
+    "out"
   ],
-  "activationEvents": [
-    "onCommand:extension.showStepFunction"
-  ],
-  "main": "./dist/extension",
-  "contributes": {
-    "commands": [
-      {
-        "command": "extension.showStepFunction",
-        "title": "Show step function"
-      }
-    ]
-  },
+  "main": "out/index.js",
+  "types": "out/index.d.ts",
   "scripts": {
-    "vscode:prepublish": "webpack --mode production",
     "webpack": "webpack --mode development",
     "webpack-dev": "webpack --mode development --watch",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "npm run compile && node ./node_modules/vscode/bin/test"
+    "start": "nodemon src/index.ts -e ts",
+    "test": "yarn run compile"
   },
   "dependencies": {
     "dagre": "0.8.5",
@@ -46,19 +35,20 @@
     "uuid": "8.3.2"
   },
   "devDependencies": {
-    "@types/dagre-d3": "0.6.2",
+    "@types/dagre-d3": "0.6.3",
     "@types/js-yaml": "4.0.1",
     "@types/lodash": "4.14.170",
-    "@types/node": "15.12.4",
+    "@types/node": "^12.0.0",
     "@types/ramda": "0.27.41",
     "@types/uuid": "8.3.0",
     "husky": "4.3.8",
+    "nodemon": "^2.0.15",
     "prettier": "2.3.1",
     "pretty-quick": "3.1.1",
     "ts-loader": "9.2.3",
+    "ts-node": "^10.5.0",
     "tslint": "6.1.3",
     "typescript": "4.3.4",
-    "vscode": "1.1.37",
     "webpack": "5.40.0",
     "webpack-cli": "4.7.2"
   },

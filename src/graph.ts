@@ -39,7 +39,7 @@ const isTerminalState = (state: State) => {
   );
 };
 
-const serializeGraph = R.compose(JSON.stringify, graphlib.json.write);
+const serializeGraph = graphlib.json.write;
 
 const makeCluster = (g: graphlib.Graph, state: State, parentClusterName: string) => {
   const clusterName = makeGroupName();
@@ -142,7 +142,7 @@ export const buildGraph = (stepFunction: StepFunction) => {
     });
 
     if (parentClusterName) {
-      [...statesToAddToParent].forEach((stateName) => {
+      Array.from(statesToAddToParent).forEach((stateName) => {
         g.setParent(stateName, parentClusterName);
       });
     }

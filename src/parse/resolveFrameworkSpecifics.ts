@@ -1,5 +1,3 @@
-import * as fs from "fs";
-import * as path from "path";
 import * as R from "ramda";
 
 import { parseText } from "./parse";
@@ -22,7 +20,9 @@ function isServerlessSeparateDeclaration(document: any) {
   return flowName && document[flowName] && document[flowName].definition && isASL(document[flowName].definition);
 }
 
-export const resolveFrameworkSpecifics = (document: any, fileName): StepFunction => {
+export const resolveFrameworkSpecifics = (data: string): StepFunction => {
+  const document = parseText(data);
+
   if (isASL(document)) {
     return {
       StartAt: document.StartAt,
@@ -34,8 +34,6 @@ export const resolveFrameworkSpecifics = (document: any, fileName): StepFunction
     const STATE_MACHINE_TYPE = "AWS::StepFunctions::StateMachine";
     const SAM_STATE_MACHINE_TYPE = "AWS::Serverless::StateMachine";
 
-    console.log(document.Resources);
-
     const stepFunctionResource = R.values(document.Resources).find((resource) => {
       return resource.Type === STATE_MACHINE_TYPE || resource.Type === SAM_STATE_MACHINE_TYPE;
     });
@@ -45,19 +43,12 @@ export const resolveFrameworkSpecifics = (document: any, fileName): StepFunction
     }
     const properties = stepFunctionResource.Properties;
 
-    console.log(properties.Definition);
-
     if (properties.DefinitionString) {
       return JSON.parse(properties.DefinitionString);
     } else if (properties.Definition) {
       return properties.Definition;
     } else if (properties.DefinitionUri) {
-      const absoluteFilePath = path.join(fileName, "..", properties.DefinitionUri);
-
-      const ext = path.extname(absoluteFilePath);
-      const text = fs.readFileSync(absoluteFilePath, "utf-8");
-
-      return parseText(text, ext);
+      return parseText(data);
     } else {
       return null;
     }
@@ -73,13 +64,9 @@ export const resolveFrameworkSpecifics = (document: any, fileName): StepFunction
     const isFileReference = typeof stateMachineValue === "string";
 
     if (isFileReference) {
-      const [, filePath, stateMachineName] = stateMachineValue.match(/\$\{file\((.*)\):(.*)\}/);
-      const absoluteFilePath = path.join(fileName, "..", filePath);
+      const [, , stateMachineName] = stateMachineValue.match(/\$\{file\((.*)\):(.*)\}/);
 
-      const ext = path.extname(absoluteFilePath);
-      const text = fs.readFileSync(absoluteFilePath, "utf-8");
-
-      const stateMachines = parseText(text, ext);
+      const stateMachines = parseText(data);
 
       return stateMachines[stateMachineName].definition;
     } else {
